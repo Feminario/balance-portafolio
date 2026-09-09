@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Balance de Portafolio · Feminario</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* Colores oficiales — Feminario_ManualDeIdentidad.pdf, sección "Colores Corporativos" */
+    --morado: #7E84AE;
+    --periwinkle: #C2CBFF;
+    --lavanda: #CEA2DD;
+    --verde: #DFF3AF;
+    /* Derivados del morado de marca, para texto y fondos (el manual no define estos, se derivan por contraste) */
+    --morado-oscuro: #4C4F68;
+    --morado-suave: #9AA0C7;
+    --crema: #F8F7F2;
+    --blanco: #FFFFFF;
+    --texto: #3A3550;
+    --bien: #3E8F63;
+    --alerta: #B24A72;
+    --vidrio: rgba(255,255,255,0.68);
+    --vidrio-borde: rgba(255,255,255,0.55);
+  }
+  *{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html,body{ margin:0; padding:0; }
+  body{
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    background: var(--crema);
+    color: var(--texto);
+    min-height: 100vh;
+    line-height: 1.55;
+    position: relative;
+    overflow-x: hidden;
+  }
+  /* ---- Fondo "liquid": manchas grandes difuminadas en los colores de marca ---- */
+  .blob{ position: fixed; border-radius: 50%; filter: blur(60px); z-index:-1; opacity:.55; }
+  .blob-1{ width: 520px; height: 520px; background: var(--periwinkle); top: -180px; left: -160px; }
+  .blob-2{ width: 460px; height: 460px; background: var(--lavanda); top: 30%; right: -220px; opacity:.45; }
+  .blob-3{ width: 420px; height: 420px; background: var(--verde); bottom: -180px; left: -140px; opacity:.4; }
+  .blob-4{ width: 300px; height: 300px; background: var(--morado); bottom: 10%; right: -120px; opacity:.18; }
+
+  #app{ max-width: 600px; margin: 0 auto; padding: 32px 18px 60px; position:relative; }
+
+  .brand-header{ display:flex; align-items:center; justify-content:center; margin-bottom: 10px; }
+  .brand-icon{ height: 52px; width:auto; display:block; }
+  .titulo-tool{ text-align:center; font-size: 25px; font-weight: 800; color: var(--morado-oscuro); margin: 0 0 24px; letter-spacing:-0.3px; }
+
+  .card{
+    background: var(--vidrio);
+    -webkit-backdrop-filter: blur(22px) saturate(1.3);
+    backdrop-filter: blur(22px) saturate(1.3);
+    border: 1px solid var(--vidrio-borde);
+    border-radius: 30px; padding: 28px 24px;
+    box-shadow: 0 20px 50px rgba(76,79,104,0.16), 0 2px 8px rgba(76,79,104,0.06);
+    margin-bottom: 18px;
+  }
+  h2{ color: var(--morado-oscuro); font-size: 22px; margin-top:0; font-weight:800; letter-spacing:-0.2px; }
+  h3{ color: var(--morado); font-size: 16px; margin-bottom: 8px; font-weight:800; }
+  p{ margin: 0 0 14px; }
+  .lead{ font-size: 15.5px; }
+  .microcopy{ font-size:13px; color:var(--morado-oscuro); background: rgba(194,203,255,0.35); border-radius:14px; padding:12px 16px; margin: 0 0 18px; }
+
+  label{ display:block; font-weight: 700; font-size: 13.5px; color: var(--morado-oscuro); margin: 16px 0 6px; }
+  label.sublabel{ margin: 12px 0 4px; font-size:12.5px; }
+  input[type="text"], input[type="number"], input[type="email"], select{
+    width:100%; padding: 13px 16px; border-radius: 16px; border: 1.5px solid rgba(126,132,174,0.28);
+    font-size: 15px; background: rgba(255,255,255,0.85); font-family: inherit; color: var(--texto);
+  }
+  input:focus, select:focus{ outline: none; border-color: var(--morado); box-shadow: 0 0 0 3px rgba(126,132,174,0.18); }
+  small.help{ display:block; color:var(--morado-suave); font-size:12.5px; margin-top:6px; }
+
+  .btn{
+    display:inline-block; width:100%; text-align:center;
+    background: linear-gradient(135deg, var(--morado), #8f8bc4);
+    color: #fff; border:none; padding: 16px 18px; border-radius: 999px; font-size: 15.5px; font-weight: 700;
+    cursor:pointer; margin-top: 22px; transition: transform .12s, box-shadow .15s;
+    text-decoration:none; font-family: inherit; box-shadow: 0 10px 24px rgba(126,132,174,0.4);
+  }
+  .btn:hover{ transform: translateY(-1px); box-shadow: 0 14px 28px rgba(126,132,174,0.5); }
+  .btn:active{ transform: scale(0.98); }
+  .btn.secundario{ background: rgba(126,132,174,0.12); color: var(--morado-oscuro); box-shadow:none; border: 1.5px solid rgba(126,132,174,0.3); }
+  .btn.secundario:hover{ background: rgba(126,132,174,0.2); transform:none; }
+  .btn.chico{ padding:11px 16px; font-size:13.5px; margin-top:12px; }
+  .btn[disabled]{ opacity:0.5; cursor:not-allowed; }
+
+  .pregunta-bloque{ margin-bottom: 22px; padding-bottom: 20px; border-bottom: 1px solid rgba(126,132,174,0.15); }
+  .pregunta-bloque:last-of-type{ border-bottom:none; }
+  .pregunta-texto{ font-weight:800; font-size:15px; color:var(--morado-oscuro); margin-bottom:10px; }
+  .opciones{ display:flex; flex-direction:column; gap:9px; }
+  .opcion{ border:1.5px solid rgba(126,132,174,0.25); border-radius:16px; padding:13px 16px; cursor:pointer; font-size:14.5px; transition: all .15s; background: rgba(255,255,255,0.5); }
+  .opcion:hover{ border-color: var(--morado); }
+  .opcion.sel{ border-color: var(--morado); background: linear-gradient(135deg, rgba(194,203,255,0.55), rgba(206,162,221,0.4)); font-weight:700; color:var(--morado-oscuro); }
+
+  .cat-group{ margin-bottom: 6px; padding: 16px 0; border-bottom: 1px solid rgba(126,132,174,0.15); }
+  .cat-group:last-child{ border-bottom:none; }
+  .cat-titulo{ display:flex; align-items:center; gap:9px; font-weight:800; font-size:14.5px; color:var(--morado-oscuro); }
+  .cat-swatch{ width:12px; height:12px; border-radius:50%; flex-shrink:0; }
+  .cat-help{ font-size:13px; color:var(--morado-suave); margin: 4px 0 10px; }
+
+  .tasa-box{ background: rgba(223,243,175,0.35); border-radius: 18px; padding: 16px 18px; margin-bottom: 18px; }
+  .tasa-box label{ margin-top:0; }
+  .tasa-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .tasa-grid label{ font-size:12.5px; margin:0 0 4px; }
+
+  /* Lista de montos con moneda (COP/USD/EUR), varias filas por categoría */
+  .monto-row{ display:flex; gap:8px; align-items:center; margin-bottom:8px; }
+  .monto-input{ flex:2; min-width:0; }
+  .moneda-select{ flex:1; min-width:74px; padding:13px 8px; }
+  .monto-del{ background:none; border:none; color:var(--alerta); font-size:18px; line-height:1; cursor:pointer; padding:6px; flex-shrink:0; }
+
+  /* Holdings de inversión de mercado */
+  .holding-row{ background: rgba(255,255,255,0.55); border-radius:18px; padding:14px; margin-bottom:10px; display:flex; flex-direction:column; gap:8px; }
+  .holding-ticker{ width:100%; }
+  .holding-tipo{ width:100%; }
+  .holding-del{ align-self:flex-start; background:none; border:none; color:var(--alerta); font-family:inherit; font-size:12px; font-weight:700; cursor:pointer; padding:0; }
+
+  .paso-nota{ text-align:center; font-size:12.5px; color:var(--morado-suave); margin: 6px 0 0; }
+  .progreso{ margin-top: 22px; }
+  .paso-dots{ display:flex; justify-content:center; gap:6px; margin-bottom:8px; }
+  .paso-dot{ width:8px; height:8px; border-radius:50%; background: rgba(126,132,174,0.22); }
+  .paso-dot.activo{ background: var(--morado); }
+  .paso-texto{ text-align:center; font-size:12px; color:var(--morado-suave); }
+
+  /* Resultado */
+  .patrimonio-hero{
+    text-align:center; background: linear-gradient(135deg, rgba(194,203,255,0.55), rgba(206,162,221,0.5));
+    border-radius: 24px; padding: 26px 20px; margin-bottom:16px; position:relative; overflow:hidden;
+  }
+  .patrimonio-hero .rotulo{ font-size:12.5px; text-transform:uppercase; letter-spacing:1.2px; color:var(--morado-oscuro); font-weight:700; }
+  .patrimonio-hero .monto{ font-size:36px; font-weight:800; color:var(--morado-oscuro); margin: 6px 0; letter-spacing:-0.5px; }
+  .patrimonio-hero .desglose{ font-size:13.5px; color:var(--morado-oscuro); opacity:.75; }
+
+  .stack-bar{ display:flex; width:100%; height:40px; border-radius:14px; overflow:hidden; background:rgba(126,132,174,0.12); }
+  .stack-seg{ display:flex; align-items:center; justify-content:center; color:#fff; font-size:12px; font-weight:800;
+    white-space:nowrap; overflow:hidden; border-right: 2px solid rgba(255,255,255,0.7); }
+  .stack-seg:last-child{ border-right:none; }
+  .legend{ margin-top:14px; display:flex; flex-direction:column; gap:9px; }
+  .legend-item{ display:flex; align-items:center; gap:10px; font-size:13.5px; }
+  .legend-swatch{ width:12px; height:12px; border-radius:50%; flex-shrink:0; }
+  .legend-label{ flex:1; color:var(--morado-oscuro); font-weight:600; }
+  .legend-val{ color:var(--morado-suave); font-weight:700; white-space:nowrap; }
+  .holdings-resumen{ font-size:13px; color:var(--morado-oscuro); background: rgba(255,255,255,0.5); border-radius:14px; padding:12px 16px; margin-top:12px; }
+
+  .perfil-card{ background: linear-gradient(135deg, rgba(206,162,221,0.55), rgba(194,203,255,0.4)); border-radius: 22px; padding: 22px; margin: 18px 0; }
+  .perfil-nombre{ font-size:19px; font-weight:800; color:var(--morado-oscuro); margin-bottom:6px; }
+  .meta-card{ background: rgba(223,243,175,0.4); border-radius:16px; padding:14px 18px; margin: 14px 0; font-size:14px; }
+  .meta-card b{ color:var(--morado-oscuro); }
+
+  .arquetipo-card{
+    background: linear-gradient(135deg, rgba(194,203,255,0.6), rgba(206,162,221,0.45));
+    border-radius: 22px; padding: 22px; margin: 18px 0;
+  }
+  .arquetipo-nombre{ font-size:20px; font-weight:800; color:var(--morado-oscuro); margin-bottom:6px; }
+
+  .coherencia-box{ border-radius:18px; padding:18px 20px; margin:16px 0; font-size:14px; }
+  .coherencia-ok{ background: rgba(62,143,99,0.12); border: 1px solid rgba(62,143,99,0.35); }
+  .coherencia-alerta{ background: rgba(178,74,114,0.1); border: 1px solid rgba(178,74,114,0.35); }
+  .coherencia-titulo{ font-weight:800; font-size:15px; color:var(--morado-oscuro); margin-bottom:6px; }
+
+  .tip{
+    background: rgba(255,255,255,0.55); border-radius: 16px;
+    padding: 13px 16px; margin-bottom: 10px; font-size: 14px; color: var(--morado-oscuro);
+    border-left: 4px solid var(--morado);
+  }
+
+  .comparativo{ background: rgba(255,255,255,0.5); border-radius:18px; padding:18px 20px; margin: 16px 0; }
+  .comparativo .fila{ display:flex; justify-content:space-between; font-size:14px; margin-bottom:6px; }
+  .comparativo .fila b{ color:var(--morado-oscuro); }
+  .sube{ color: var(--bien); font-weight:800; }
+  .baja{ color: var(--alerta); font-weight:800; }
+  .sparkline-wrap{ text-align:center; margin-top:10px; }
+
+  .explorar{ background: linear-gradient(135deg, rgba(126,132,174,0.16), rgba(206,162,221,0.28)); border-radius: 24px; padding: 24px 22px; margin-top: 12px; }
+  .explorar h3{ color: var(--morado-oscuro); }
+  .explorar p{ color: var(--morado-oscuro); font-size:14px; opacity:.85; }
+
+  .footer-nota{ text-align:center; font-size: 12px; color: var(--morado-suave); margin-top: 22px; line-height:1.5; }
+  .link-volver{ display:block; width:100%; text-align:center; margin-top:14px; font-size:13.5px; color:var(--morado); cursor:pointer; text-decoration:underline; background:none; border:none; padding:0; font-family:inherit; }
+</style>
+</head>
+<body>
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
+<div class="blob blob-4"></div>
+<div id="app"></div>
+
+<script>
+/* ============================================================
+   CONFIGURACIÓN — pega aquí la URL /exec que te da Google al
+   desplegar el Web App de Apps Script conectado a tu Google
+   Sheet "Balance de Portafolio Club365 - Respuestas". Mientras
+   esté vacío, los datos solo se guardan en el navegador (consola)
+   y NO llegan a ningún lado.
+   ============================================================ */
+const SHEET_WEBAPP_URL = ""; // pega aquí la URL /exec de tu Web App de Apps Script
+const LINK_EXPLORAR = "https://feminario.com"; // cambia por el link real a donde quieres mandarla a explorar más recursos de Feminario
+
+/* ============================================================
+   LOGO FEMINARIO — isotipo oficial del manual de identidad,
+   embebido como base64.
+   ============================================================ */
+const ICON_B64 = "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";
+
+/* ============================================================
+   CATEGORÍAS DE ACTIVOS Y PASIVOS
+   Colores validados para daltonismo (protanopia/deuteranopia)
+   y contraste — no son los colores de marca de fondo/redes,
+   son una paleta aparte pensada solo para identificar datos en
+   la barra de composición.
+   ============================================================ */
+const ASSET_CATS = [
+  { key:"liquidez", label:"Liquidez — tu Fondo de Autonomía", help:"Ahorros, efectivo, cualquier cuenta a la que puedas entrar hoy mismo si algo pasa.", color:"#6E5AA8" },
+  { key:"rentaFija", label:"Renta fija (CDT, fiducuenta)", help:"Plata guardada a un plazo pactado — no la necesitas ya, pero tampoco quieres que se mueva con el mercado.", color:"#E2703D" },
+  { key:"pension", label:"Pensión y cesantías", help:"Lo que tienes acumulado en pensión obligatoria, pensión voluntaria y cesantías.", color:"#2F9E86" },
+  { key:"vivienda", label:"Vivienda", help:"El valor comercial de tu vivienda (si es propia) más cualquier otro inmueble que tengas para arrendar o vender.", color:"#3E76D8" },
+  { key:"mercado", label:"Inversión de mercado", help:"Acciones, ETFs, fondos de inversión colectiva (FICs) o criptomonedas.", color:"#C14F86" },
+  { key:"negocio", label:"Negocio propio", help:"El valor estimado de tu parte en un negocio o emprendimiento propio (si tienes).", color:"#B58A2E" },
+  { key:"otros", label:"Vehículo y otros activos", help:"Tu vehículo, joyas u otros bienes de valor que no encajen arriba.", color:"#9C3F55" },
+];
+const DEBT_CATS = [
+  { key:"tarjetas", label:"Tarjetas de crédito" },
+  { key:"hipotecario", label:"Crédito hipotecario" },
+  { key:"vehiculoCredito", label:"Crédito de vehículo" },
+  { key:"personales", label:"Préstamos personales / libranza" },
+  { key:"educativo", label:"Crédito educativo" },
+  { key:"informal", label:"Deuda informal (gota a gota, préstamos de familiares)" },
+  { key:"otrasDeudas", label:"Otras deudas" },
+];
+const TIPO_HOLDING = ["ETF", "Acción individual", "Fondo de inversión (FIC)", "Criptomoneda", "Otro"];
+const MONEDAS = ["COP", "USD", "EUR"];
+
+/* Campos simples de plata (id del dato + prefijo para el export plano) */
+const CAMPOS_SIMPLES = [
+  { id:"liquidez", pref:"activo_liquidez" },
+  { id:"rentaFija", pref:"activo_rentaFija" },
+  { id:"pension", pref:"activo_pension" },
+  { id:"viviendaPropia", pref:"activo_viviendaPropia" },
+  { id:"viviendaInversion", pref:"activo_viviendaInversion" },
+  { id:"negocio", pref:"activo_negocio" },
+  { id:"vehiculo", pref:"activo_vehiculo" },
+  { id:"otrosActivos", pref:"activo_otrosActivos" },
+  { id:"tarjetas", pref:"deuda_tarjetas" },
+  { id:"hipotecario", pref:"deuda_hipotecario" },
+  { id:"vehiculoCredito", pref:"deuda_vehiculoCredito" },
+  { id:"personales", pref:"deuda_personales" },
+  { id:"educativo", pref:"deuda_educativo" },
+  { id:"informal", pref:"deuda_informal" },
+  { id:"otrasDeudas", pref:"deuda_otrasDeudas" },
+  { id:"gastoMensual", pref:"gastoMensual" },
+];
+
+/* ============================================================
+   PERFIL DE RIESGO Y METAS
+   ============================================================ */
+const RISK_QUESTIONS = [
+  { key:"horizonte", pregunta:"¿En cuánto tiempo crees que vas a necesitar la mayor parte de esta plata?", opciones:[
+    {texto:"Menos de 1 año", valor:1},
+    {texto:"Entre 1 y 3 años", valor:2},
+    {texto:"Entre 3 y 7 años", valor:3},
+    {texto:"Más de 7 años", valor:4},
+  ]},
+  { key:"reaccion", pregunta:"Imagina que inviertes y en un mes el valor cae 20%. ¿Qué harías?", opciones:[
+    {texto:"Saco todo de inmediato, no soporto ver números en rojo", valor:1},
+    {texto:"Saco una parte, para dormir tranquila", valor:2},
+    {texto:"No hago nada, espero a que se recupere", valor:3},
+    {texto:"Aprovecho y meto más, porque está \"barato\"", valor:4},
+  ]},
+  { key:"experiencia", pregunta:"¿Qué tan familiarizada estás con invertir en algo distinto a cuenta de ahorros o CDT?", opciones:[
+    {texto:"Nunca he invertido en otra cosa", valor:1},
+    {texto:"He oído hablar, pero no lo he hecho", valor:2},
+    {texto:"Ya invertí alguna vez en fondos o acciones", valor:3},
+    {texto:"Invierto activamente y entiendo cómo se mueve el mercado", valor:4},
+  ]},
+  { key:"ingresos", pregunta:"¿Qué tan estable es tu ingreso mensual hoy?", opciones:[
+    {texto:"Muy inestable, cambia mucho mes a mes", valor:1},
+    {texto:"Variable, pero con una base que puedo prever", valor:2},
+    {texto:"Estable, con ingresos fijos", valor:3},
+    {texto:"Estable y con varias fuentes de ingreso", valor:4},
+  ]},
+  { key:"prioridad", pregunta:"Si tuvieras que elegir, ¿qué te importa más?", opciones:[
+    {texto:"Que mi plata no se reduzca nunca, aunque crezca poquito", valor:1},
+    {texto:"Que crezca algo más que la inflación, sin sustos grandes", valor:2},
+    {texto:"Que crezca bien, aunque eso signifique ver bajones en el camino", valor:3},
+    {texto:"Buscar el mayor crecimiento posible, aunque haya momentos duros", valor:4},
+  ]},
+  { key:"capacidad", pregunta:"Si perdieras temporalmente el 20% de lo que inviertas, ¿qué tanto afectaría tu vida diaria?", opciones:[
+    {texto:"Mucho — necesito esa plata para vivir", valor:1},
+    {texto:"Bastante — me preocuparía seriamente", valor:2},
+    {texto:"Poco — tengo otros recursos para cubrirme", valor:3},
+    {texto:"Nada — es plata que no voy a tocar en años", valor:4},
+  ]},
+];
+const GOAL_OPTIONS = [
+  "Armar o fortalecer mi fondo de emergencia",
+  "Comprar vivienda",
+  "Independencia financiera / pensión",
+  "Educación (propia o de mis hijos)",
+  "Crecer o iniciar un negocio propio",
+  "Un viaje o meta personal de corto plazo",
+  "Dejar patrimonio o herencia a mi familia",
+  "Salir de deudas",
+  "Otra",
+];
+const HORIZONTE_OPTIONS = ["Menos de 1 año", "Entre 1 y 3 años", "Entre 3 y 7 años", "Más de 7 años"];
+
+function calcularPerfilRiesgo(respuestas){
+  const score = Object.values(respuestas).reduce((a,b)=>a+n(b), 0);
+  let categoria, descripcion;
+  if(score <= 12){
+    categoria = "Conservadora";
+    descripcion = "Prefieres proteger lo que tienes antes que arriesgarte a que crezca mucho. No hay nada de malo en eso — solo hay que asegurarse de que no sea tan conservador que la inflación se coma tu plata en silencio.";
+  } else if(score <= 18){
+    categoria = "Moderada";
+    descripcion = "Buscas un balance: que tu plata crezca, pero sin sustos grandes. Puedes tolerar algo de vaivén si el plan detrás tiene sentido.";
+  } else {
+    categoria = "Arriesgada";
+    descripcion = "Estás dispuesta a ver bajones en el camino con tal de buscar más crecimiento. Ojo: arriesgada no es lo mismo que impulsiva — el riesgo funciona cuando tiene un plan y un colchón detrás.";
+  }
+  return { score, categoria, descripcion };
+}
+
+/* ============================================================
+   ESTADO — perfil + historial mensual en localStorage del
+   navegador. El respaldo real (para tu información agregada y
+   para diseñar las sesiones del curso) vive en tu Google Sheet
+   vía SHEET_WEBAPP_URL.
+   OJO: el historial mes a mes solo se ve en el mismo navegador/
+   dispositivo donde ella llena el formulario. Si abre el link
+   desde otro celular, no va a ver su historial anterior en
+   pantalla — eso sí queda guardado en tu Sheet, pero no hay
+   forma de traerlo de vuelta a la pantalla sin un login real
+   (posible fase futura).
+   ============================================================ */
+const STORAGE_KEY = "fem_balance_portafolio_v4";
+function getState(){ try{ const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; }catch(e){ return null; } }
+function saveState(state){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+function enviarABaseDeDatos(payload){
+  if(!SHEET_WEBAPP_URL){ console.log("[Balance de Portafolio] Sin SHEET_WEBAPP_URL configurada. Datos solo guardados localmente:", payload); return; }
+  fetch(SHEET_WEBAPP_URL, { method:"POST", mode:"no-cors", headers:{"Content-Type":"text/plain"}, body: JSON.stringify(payload) })
+    .catch(err => console.log("[Balance de Portafolio] Error al enviar a la base de datos:", err));
+}
+
+/* ============================================================
+   UTILIDADES
+   ============================================================ */
+function n(v){ return Number(v) || 0; }
+function cop(v){ v = Number(v) || 0; const signo = v < 0 ? "-" : ""; return signo + "$" + Math.round(Math.abs(v)).toLocaleString("es-CO"); }
+function pct(v){ return Math.round(v*100); }
+function esc(s){ return (s || "").toString().replace(/"/g, "&quot;"); }
+function alertaSuave(msg){
+  const el = document.createElement("div");
+  el.textContent = msg;
+  el.style.cssText = "position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#4C4F68;color:#fff;padding:12px 18px;border-radius:14px;font-size:14px;z-index:99;max-width:90%;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.25);";
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(), 2600);
+}
+
+function header(){
+  return `<div class="brand-header">
+      <img class="brand-icon" src="data:image/png;base64,${ICON_B64}" alt="Feminario">
+    </div>
+    <div class="titulo-tool">Balance de Portafolio</div>`;
+}
+function progreso(paso, total){
+  let dots = "";
+  for(let i=1;i<=total;i++){ dots += `<span class="paso-dot ${i<=paso?'activo':''}"></span>`; }
+  return `<div class="progreso"><div class="paso-dots">${dots}</div><div class="paso-texto">Paso ${paso} de ${total}</div></div>`;
+}
+
+/* ============================================================
+   MONEDA — cada categoría de plata puede tener varios montos en
+   distintas monedas a la vez (ej: parte de tu Fondo de Autonomía
+   en pesos y otra parte en dólares). Guardamos una lista de
+   {monto, moneda} por categoría y convertimos todo a COP con las
+   tasas que ella misma define, solo para poder sumar y sacar
+   porcentajes. Sus valores originales quedan intactos.
+   ============================================================ */
+let draftListas = {};
+function entradaVacia(){ return { monto:"", moneda:"COP" }; }
+function inicializarLista(id){
+  draftListas[id] = (draft[id] && draft[id].length) ? draft[id].map(e=>({...e})) : [entradaVacia()];
+}
+function renderListaMonto(id, placeholder){
+  const entradas = draftListas[id] && draftListas[id].length ? draftListas[id] : [entradaVacia()];
+  return `<div id="lista-${id}">
+    ${entradas.map((e,i) => `
+      <div class="monto-row">
+        <input type="number" class="monto-input" placeholder="${placeholder||'0'}" value="${e.monto||''}" oninput="draftListas['${id}'][${i}].monto=this.value">
+        <select class="moneda-select" onchange="draftListas['${id}'][${i}].moneda=this.value">
+          ${MONEDAS.map(m => `<option value="${m}" ${e.moneda===m?'selected':''}>${m}</option>`).join("")}
+        </select>
+        ${entradas.length>1 ? `<button type="button" class="monto-del" onclick="quitarEntradaLista('${id}',${i})" aria-label="Quitar">✕</button>` : ""}
+      </div>
+    `).join("")}
+    <button type="button" class="btn secundario chico" onclick="agregarEntradaLista('${id}')">+ Agregar otro monto</button>
+  </div>`;
+}
+function agregarEntradaLista(id){
+  draftListas[id].push(entradaVacia());
+  document.getElementById("lista-"+id).outerHTML = renderListaMonto(id);
+}
+function quitarEntradaLista(id, i){
+  draftListas[id].splice(i,1);
+  if(draftListas[id].length===0) draftListas[id] = [entradaVacia()];
+  document.getElementById("lista-"+id).outerHTML = renderListaMonto(id);
+}
+function leerLista(id){
+  return (draftListas[id]||[]).filter(e => n(e.monto) > 0).map(e => ({ monto: n(e.monto), moneda: e.moneda || "COP" }));
+}
+function enCop(entrada, tasas){
+  if(!entrada) return 0;
+  const monto = n(entrada.monto);
+  if(entrada.moneda === "USD") return monto * n(tasas.usd);
+  if(entrada.moneda === "EUR") return monto * n(tasas.eur);
+  return monto;
+}
+function sumaListaCop(lista, tasas){ return (lista||[]).reduce((s,e) => s + enCop(e, tasas), 0); }
+function formatoMonto(e){
+  const val = Math.round(n(e.monto)).toLocaleString("es-CO");
+  if(e.moneda === "USD") return "US$" + val;
+  if(e.moneda === "EUR") return "€" + val;
+  return "$" + val;
+}
+function detalleLista(lista){ return (lista||[]).filter(e => n(e.monto) > 0).map(formatoMonto).join(" + "); }
+
+/* ============================================================
+   HOLDINGS DE INVERSIÓN DE MERCADO — en vez de un solo monto,
+   pedimos específicamente en qué ETFs/acciones/fondos está esa
+   plata. Esto le sirve a la lectora (un diagnóstico más preciso
+   de qué tan agresivo/conservador es su portafolio) y a
+   Feminario (saber qué le interesa a la cohorte para armar las
+   sesiones del curso).
+   ============================================================ */
+let draftHoldings = [];
+function holdingVacio(){ return { ticker:"", tipo:"ETF", monto:"", moneda:"COP" }; }
+function renderHoldingsHTML(){
+  if(!draftHoldings || draftHoldings.length===0) draftHoldings = [holdingVacio()];
+  return draftHoldings.map((h,i) => `
+    <div class="holding-row">
+      <input type="text" class="holding-ticker" placeholder="¿En qué? Ej: VOO, Ecopetrol, Bitcoin" value="${esc(h.ticker)}" oninput="draftHoldings[${i}].ticker=this.value">
+      <select class="holding-tipo" onchange="draftHoldings[${i}].tipo=this.value">
+        ${TIPO_HOLDING.map(t => `<option value="${t}" ${h.tipo===t?'selected':''}>${t}</option>`).join("")}
+      </select>
+      <div class="monto-row" style="margin-bottom:0;">
+        <input type="number" class="monto-input" placeholder="Monto aproximado" value="${h.monto||''}" oninput="draftHoldings[${i}].monto=this.value">
+        <select class="moneda-select" onchange="draftHoldings[${i}].moneda=this.value">
+          ${MONEDAS.map(m => `<option value="${m}" ${h.moneda===m?'selected':''}>${m}</option>`).join("")}
+        </select>
+      </div>
+      ${draftHoldings.length>1 ? `<button type="button" class="holding-del" onclick="eliminarHolding(${i})">✕ Quitar esta inversión</button>` : ""}
+    </div>
+  `).join("") + `<button type="button" class="btn secundario chico" onclick="agregarHolding()">+ Agregar otra inversión</button>`;
+}
+function agregarHolding(){ draftHoldings.push(holdingVacio()); document.getElementById("holdings-mercado").innerHTML = renderHoldingsHTML(); }
+function eliminarHolding(i){ draftHoldings.splice(i,1); document.getElementById("holdings-mercado").innerHTML = renderHoldingsHTML(); }
+
+/* ============================================================
+   CÁLCULO DE PORTAFOLIO — arma el snapshot del mes con activos,
+   pasivos, patrimonio neto, meses de colchón, apalancamiento,
+   concentración y el arquetipo de balance/diversificación.
+   Todos los valores se convierten a COP con las tasas indicadas
+   para poder sumarlos; el detalle original (montos y monedas
+   por separado) se guarda en snapshot.raw para el próximo corte
+   y para el export a tu Excel.
+   ============================================================ */
+function calcularSnapshot(draft, tasas){
+  tasas = { usd: n(tasas.usd) || 4000, eur: n(tasas.eur) || 4300 };
+  const activos = {
+    liquidez: sumaListaCop(draft.liquidez, tasas),
+    rentaFija: sumaListaCop(draft.rentaFija, tasas),
+    pension: sumaListaCop(draft.pension, tasas),
+    vivienda: sumaListaCop(draft.viviendaPropia, tasas) + sumaListaCop(draft.viviendaInversion, tasas),
+    mercado: (draft.mercadoHoldings||[]).reduce((s,h)=> s + enCop(h, tasas), 0),
+    negocio: sumaListaCop(draft.negocio, tasas),
+    otros: sumaListaCop(draft.vehiculo, tasas) + sumaListaCop(draft.otrosActivos, tasas),
+  };
+  const activosDetalle = {
+    viviendaPropia: sumaListaCop(draft.viviendaPropia, tasas), viviendaInversion: sumaListaCop(draft.viviendaInversion, tasas),
+    vehiculo: sumaListaCop(draft.vehiculo, tasas), otrosActivos: sumaListaCop(draft.otrosActivos, tasas),
+  };
+  const pasivos = {};
+  DEBT_CATS.forEach(c => pasivos[c.key] = sumaListaCop(draft[c.key], tasas));
+  const gastoMensual = sumaListaCop(draft.gastoMensual, tasas);
+
+  const totalActivos = Object.values(activos).reduce((a,b)=>a+b, 0);
+  const totalPasivos = Object.values(pasivos).reduce((a,b)=>a+b, 0);
+  const patrimonioNeto = totalActivos - totalPasivos;
+  const mesesColchon = gastoMensual > 0 ? Math.round((activos.liquidez / gastoMensual)*10)/10 : 0;
+  const relacionDeudaActivos = totalActivos > 0 ? totalPasivos/totalActivos : (totalPasivos>0 ? 1 : 0);
+
+  let maxCat = null, maxPct = 0;
+  ASSET_CATS.forEach(cat=>{
+    const p = totalActivos>0 ? activos[cat.key]/totalActivos : 0;
+    if(p > maxPct){ maxPct = p; maxCat = cat.key; }
+  });
+  const bucketsConPresencia = ASSET_CATS.filter(cat => totalActivos>0 && (activos[cat.key]/totalActivos) >= 0.05).length;
+  const sinLargoPlazo = (activos.pension + activos.mercado) <= 0;
+
+  let arquetipo, mensaje, tips = [];
+
+  if(totalActivos <= 0 && totalPasivos <= 0){
+    arquetipo = "La Que Empieza Desde Cero";
+    mensaje = "Hoy no tienes activos registrados todavía — y está bien. Este primer corte es tu línea base: todo lo que venga de aquí en adelante ya es progreso que vas a poder medir.";
+    tips = [
+      "Tu primer paso no es invertir, es armar tu Fondo de Autonomía, aunque sea con " + cop(20000) + " esta semana.",
+      "Vuelve a hacer este corte el próximo mes — la comparación es lo que te va a mostrar que sí estás avanzando."
+    ];
+  } else if(gastoMensual > 0 && mesesColchon < 1){
+    arquetipo = "La Sin Red de Seguridad";
+    mensaje = `Tienes ${cop(patrimonioNeto)} de patrimonio neto, pero solo ${mesesColchon} meses de colchón. Así tengas otras cosas (vivienda, pensión, inversión), si hoy te quedas sin ingreso no tienes con qué cubrir lo básico sin vender algo o endeudarte.`;
+    tips = [
+      `Antes de meterle más a inversión o a pagar deuda extra, prioriza juntar al menos 1 mes de gastos (${cop(gastoMensual)}) en liquidez inmediata.`,
+      "Revisa si alguno de tus otros activos (un CDT que ya cumplió plazo, por ejemplo) puede pasar a liquidez sin perder mucho."
+    ];
+  } else if(maxPct >= 0.7 && maxCat === "vivienda"){
+    arquetipo = "La Casa-Fuerte";
+    mensaje = `El ${pct(maxPct)}% de tu patrimonio está en vivienda. Es un activo real y valioso, pero no es líquido: no lo puedes usar rápido si necesitas plata ya.`;
+    tips = [
+      "Como tu colchón está cubierto, el siguiente paso es empezar a construir algo líquido o de mercado por fuera del ladrillo, así no dependes de vender o hipotecar la casa ante un imprevisto.",
+      "Con el tiempo, ninguna categoría debería pesar más del 60-70% de tu patrimonio — ni siquiera la vivienda."
+    ];
+  } else if(maxPct >= 0.7 && (maxCat === "liquidez" || maxCat === "rentaFija")){
+    arquetipo = "La Guardiana Cautelosa";
+    mensaje = `El ${pct(maxPct)}% de tu patrimonio está en efectivo o CDT. Tu plata está segura, pero una parte importante no está creciendo a largo plazo.`;
+    tips = [
+      "Con tu colchón ya cubierto, destina un % fijo de lo nuevo que ahorres a pensión voluntaria o a un fondo de inversión, así ese dinero también trabaja para ti.",
+      "No se trata de mover todo de golpe: empieza con un monto pequeño y constante cada mes."
+    ];
+  } else if(relacionDeudaActivos >= 0.4){
+    arquetipo = "La Apalancada";
+    mensaje = `Tu deuda equivale al ${pct(relacionDeudaActivos)}% de todo lo que tienes. Antes de pensar en invertir más, vale la pena mirar si esa deuda te está costando más de lo que te está rindiendo cualquier otra cosa.`;
+    tips = [
+      "Identifica cuál de tus deudas tiene la tasa más alta (usualmente la tarjeta de crédito) y ponla de primera en tu plan de pago.",
+      "Si tu deuda es sobre todo hipotecaria con una tasa razonable, no es urgente — el problema real es la deuda cara de consumo, no toda deuda por igual."
+    ];
+  } else if(sinLargoPlazo && mesesColchon >= 3){
+    arquetipo = "La Segura de Hoy, Corta de Mañana";
+    mensaje = "Tu día a día está bien cubierto: tienes colchón y no estás endeudada de más. Pero no tienes nada en pensión voluntaria ni en mercado — nada está creciendo pensando en los próximos 10 o 20 años.";
+    tips = [
+      "Aunque sea un monto pequeño y constante, empezar hoy en pensión voluntaria o en un fondo de inversión le da tiempo al interés compuesto, que es lo que realmente hace la diferencia.",
+      "No necesitas saber de mercados para empezar — necesitas empezar para aprender."
+    ];
+  } else if(bucketsConPresencia >= 4 && mesesColchon >= 3 && relacionDeudaActivos < 0.4 && maxPct < 0.6){
+    arquetipo = "La Estratega Diversificada";
+    mensaje = "Tu patrimonio está repartido en varios frentes, tu colchón está en un buen rango y tu deuda no te está ahogando. Esto no significa que ya no hay nada que mejorar, pero sí que tienes una base sólida.";
+    tips = [
+      "El siguiente nivel ya no es \"tener de todo\" — es revisar si cada parte está en su mejor versión posible (tasas, costos, diversificación dentro de cada categoría).",
+      "Repite este corte cada mes: a este nivel, lo que importa es mantener el balance, no solo haberlo logrado una vez."
+    ];
+  } else {
+    arquetipo = "La Que Va Armando el Rompecabezas";
+    mensaje = "Ya tienes varias piezas puestas — no estás empezando de cero, pero tampoco está todo balanceado todavía. Vamos por partes.";
+    const candidatos = [];
+    if(gastoMensual > 0 && mesesColchon < 3) candidatos.push(`Tu colchón está en ${mesesColchon} meses — la meta recomendada es 3 a 6. Eso va primero.`);
+    if(sinLargoPlazo) candidatos.push("No tienes nada en pensión voluntaria ni en mercado — es tu oportunidad de crecimiento a más largo plazo.");
+    if(maxPct >= 0.5) candidatos.push(`El ${pct(maxPct)}% de tu patrimonio está concentrado en una sola categoría — vale la pena repartir un poco más.`);
+    if(relacionDeudaActivos >= 0.25) candidatos.push(`Tu deuda equivale al ${pct(relacionDeudaActivos)}% de tus activos — no es crítico, pero mantenla vigilada.`);
+    if(candidatos.length === 0) candidatos.push("Vas bien encaminada — sigue sumando un poco cada mes a las categorías donde tienes menos.");
+    tips = candidatos.slice(0,2);
+  }
+
+  const raw = {
+    liquidez: draft.liquidez, rentaFija: draft.rentaFija, pension: draft.pension,
+    viviendaPropia: draft.viviendaPropia, viviendaInversion: draft.viviendaInversion,
+    mercadoHoldings: draft.mercadoHoldings || [],
+    negocio: draft.negocio, vehiculo: draft.vehiculo, otrosActivos: draft.otrosActivos,
+    tarjetas: draft.tarjetas, hipotecario: draft.hipotecario, vehiculoCredito: draft.vehiculoCredito,
+    personales: draft.personales, educativo: draft.educativo, informal: draft.informal, otrasDeudas: draft.otrasDeudas,
+    gastoMensual: draft.gastoMensual, tasaUSD: tasas.usd, tasaEUR: tasas.eur
+  };
+
+  return {
+    fecha: new Date().toISOString(),
+    tasaUSD: tasas.usd, tasaEUR: tasas.eur, raw,
+    gastoMensual,
+    activos, activosDetalle, pasivos,
+    totales: { totalActivos, totalPasivos, patrimonioNeto },
+    mesesColchon, relacionDeudaActivos,
+    concentracion: { categoria: maxCat, porcentaje: maxPct },
+    bucketsConPresencia,
+    arquetipo, mensaje, tips
+  };
+}
+
+/* ============================================================
+   COHERENCIA — cruza perfil de riesgo + meta con la composición
+   real del portafolio. Este es el segundo diagnóstico (distinto
+   del balance/diversificación): no pregunta "¿está balanceado?"
+   sino "¿esto tiene sentido para lo que ella dijo que quiere y
+   tolera?".
+   ============================================================ */
+function evaluarCoherencia(perfilRiesgo, metas, activos, totalActivos){
+  if(!perfilRiesgo || !metas || totalActivos <= 0) return null;
+  const pctMercado = activos.mercado / totalActivos;
+  const pctConservador = (activos.liquidez + activos.rentaFija) / totalActivos;
+  const pctLargoPlazo = (activos.mercado + activos.pension) / totalActivos;
+  const horizonteLargo = metas.horizonte === "Entre 3 y 7 años" || metas.horizonte === "Más de 7 años";
+  const horizonteCorto = metas.horizonte === "Menos de 1 año";
+
+  if(perfilRiesgo.categoria === "Conservadora" && pctMercado > 0.4){
+    return { estado:"alerta", titulo:"Tu portafolio tiene más riesgo del que dijiste tolerar",
+      mensaje:`Te definiste como de perfil <b>conservador</b>, pero el ${pct(pctMercado)}% de tu patrimonio está en inversión de mercado. Si un bajón fuerte te quita el sueño (según lo que respondiste), vale la pena revisar si ese porcentaje es demasiado para ti hoy.` };
+  }
+  if(horizonteCorto && pctMercado > 0.3){
+    return { estado:"alerta", titulo:"Tu meta es de corto plazo, pero tu plata está expuesta al mercado",
+      mensaje:`Dijiste que quieres lograr "<b>${esc(metas.principal)}</b>" en menos de 1 año, y el ${pct(pctMercado)}% de tu patrimonio está en inversión de mercado. El riesgo es necesitar esa plata justo cuando el mercado esté en un mal momento.` };
+  }
+  if((perfilRiesgo.categoria === "Arriesgada" || horizonteLargo) && pctLargoPlazo < 0.15 && pctConservador > 0.6){
+    return { estado:"alerta", titulo:"Podrías estar dejando crecimiento sobre la mesa",
+      mensaje:`Tu perfil o el horizonte de tu meta permiten buscar más crecimiento, pero el ${pct(pctConservador)}% de tu patrimonio está en efectivo o CDT. Con un horizonte largo, esa plata podría estar trabajando más para ti.` };
+  }
+  return { estado:"ok", titulo:"Tu portafolio va en línea con tu perfil",
+    mensaje:`Para un perfil <b>${perfilRiesgo.categoria.toLowerCase()}</b> y tu meta de "<b>${esc(metas.principal)}</b>", la forma en que tienes repartida tu plata tiene sentido. Eso no quita que revisemos el balance general más abajo — coherente con tu perfil no siempre es lo mismo que bien diversificado.` };
+}
+
+/* ============================================================
+   COMPONENTES VISUALES — barra apilada de composición, leyenda
+   y mini-gráfico de tendencia (línea) para comparar meses.
+   ============================================================ */
+function renderStackBar(activos, totalActivos){
+  if(totalActivos <= 0) return `<div class="stack-bar"></div>`;
+  const visibles = ASSET_CATS.filter(cat => activos[cat.key] > 0);
+  const segs = visibles.map((cat, i)=>{
+    const p = activos[cat.key] / totalActivos;
+    const estiloRadio = visibles.length===1 ? "border-radius:14px;" : (i===0 ? "border-radius:14px 0 0 14px;" : (i===visibles.length-1 ? "border-radius:0 14px 14px 0;" : ""));
+    return `<div class="stack-seg" style="width:${(p*100).toFixed(2)}%; background:${cat.color}; ${estiloRadio}" title="${cat.label}">${p>=0.12 ? pct(p)+"%" : ""}</div>`;
+  }).join("");
+  return `<div class="stack-bar">${segs}</div>`;
+}
+function renderLegend(activos, totalActivos){
+  return ASSET_CATS.filter(cat => activos[cat.key] > 0).map(cat=>{
+    const p = totalActivos>0 ? activos[cat.key]/totalActivos : 0;
+    return `<div class="legend-item">
+      <span class="legend-swatch" style="background:${cat.color}"></span>
+      <span class="legend-label">${cat.label}</span>
+      <span class="legend-val">${cop(activos[cat.key])} · ${pct(p)}%</span>
+    </div>`;
+  }).join("");
+}
+function renderHoldingsResumen(snapshot){
+  const holdings = (snapshot.raw.mercadoHoldings||[]).filter(h => h.ticker && h.ticker.trim());
+  if(holdings.length===0) return "";
+  return `<div class="holdings-resumen"><b>Tu inversión de mercado incluye:</b> ${holdings.map(h=>`${esc(h.ticker)} (${esc(h.tipo)})`).join(" · ")}</div>`;
+}
+function renderSparkline(historial){
+  if(historial.length < 2) return "";
+  const ultimos = historial.slice(-6);
+  const vals = ultimos.map(h => h.totales.patrimonioNeto);
+  const w = 260, h = 56, pad = 8;
+  const min = Math.min(...vals), max = Math.max(...vals);
+  const range = (max - min) || 1;
+  const pts = vals.map((v,i)=>{
+    const x = pad + i*(w-2*pad)/(vals.length-1);
+    const y = h-pad - ((v-min)/range)*(h-2*pad);
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(" ");
+  const color = vals[vals.length-1] >= vals[0] ? "#3E8F63" : "#B24A72";
+  return `<div class="sparkline-wrap"><svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+    <polyline points="${pts}" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg><div style="font-size:11.5px;color:var(--morado-suave);">Tu patrimonio neto en tus últimos ${ultimos.length} cortes</div></div>`;
+}
+
+/* ============================================================
+   PANTALLA 0 — BIENVENIDA / IDENTIFICACIÓN
+   ============================================================ */
+function pantallaBienvenida(){
+  document.getElementById("app").innerHTML = `
+    ${header()}
+    <div class="card">
+      <p class="lead">Este no es otro "cuánto tienes menos cuánto debes". Es una foto de <b>cómo está repartida</b> tu plata y de si esa mezcla tiene sentido para lo que quieres lograr — no solo el número final.</p>
+      <p>Primero unas preguntas sobre tu perfil de riesgo y tus metas, y luego entramos al detalle de tu portafolio. Puedes volver a hacerlo cada mes, para ver si tu mezcla va mejorando.</p>
+      <label>¿Cómo te llamas? (nombre y apellido)</label>
+      <input type="text" id="in-nombre" placeholder="Tu nombre completo">
+      <label>Tu email</label>
+      <input type="text" id="in-email" placeholder="tucorreo@ejemplo.com">
+      <label>Tu WhatsApp</label>
+      <input type="text" id="in-whatsapp" placeholder="Ej: 3001234567">
+      <label>Tu edad</label>
+      <input type="number" id="in-edad" placeholder="Ej: 34">
+      <button class="btn" onclick="empezarPerfil()">Empezar</button>
+      <div class="footer-nota">Tus datos son privados dentro de Feminario. Los usamos para tu resultado y para diseñar las sesiones de construcción de portafolio que arrancan el 24 de septiembre.</div>
+    </div>
+  `;
+}
+function empezarPerfil(){
+  const nombre = document.getElementById("in-nombre").value.trim();
+  const email = document.getElementById("in-email").value.trim();
+  const whatsapp = document.getElementById("in-whatsapp").value.trim();
+  const edad = document.getElementById("in-edad").value.trim();
+  if(!nombre || !email || !whatsapp){ alertaSuave("Nos falta tu nombre, tu email y tu WhatsApp para arrancar 💛"); return; }
+  const state = { nombre, email, whatsapp, edad: n(edad), perfilRiesgo: null, metas: null, historial: [] };
+  saveState(state);
+  render();
+}
+
+/* ============================================================
+   PANTALLA 1 — PERFIL DE RIESGO
+   ============================================================ */
+let draftRiesgo = {};
+function pantallaRiesgo(state){
+  draftRiesgo = (state.perfilRiesgo && state.perfilRiesgo.respuestas) ? { ...state.perfilRiesgo.respuestas } : {};
+  document.getElementById("app").innerHTML = `
+    ${header()}
+    <div class="card">
+      <h2>Tu perfil de riesgo</h2>
+      <div class="microcopy">No hay respuesta correcta aquí — entre más honesta seas, mejor te vamos a poder ayudar a armar tu portafolio en las sesiones que empiezan el 24 de septiembre.</div>
+      ${RISK_QUESTIONS.map(q => `
+        <div class="pregunta-bloque">
+          <div class="pregunta-texto">${q.pregunta}</div>
+          <div class="opciones" id="op-riesgo-${q.key}">
+            ${q.opciones.map(o => `<div class="opcion ${draftRiesgo[q.key]===o.valor?'sel':''}" onclick="elegirRiesgo('${q.key}', ${o.valor})">${o.texto}</div>`).join("")}
+          </div>
+        </div>
+      `).join("")}
+      <button class="btn" onclick="guardarRiesgo()">Ver mi perfil y continuar</button>
+      ${progreso(1,5)}
+    </div>
+  `;
+}
+function elegirRiesgo(key, valor){
+  draftRiesgo[key] = valor;
+  document.querySelectorAll("#op-riesgo-"+key+" .opcion").forEach((el, i) => {
+    const opciones = RISK_QUESTIONS.find(q=>q.key===key).opciones;
+    el.classList.toggle("sel", opciones[i].valor === valor);
+  });
+}
+function guardarRiesgo(){
+  const faltan = RISK_QUESTIONS.filter(q => draftRiesgo[q.key] === undefined);
+  if(faltan.length > 0){ alertaSuave("Te faltan " + faltan.length + " pregunta(s) por responder 💛"); return; }
+  const perfil = calcularPerfilRiesgo(draftRiesgo);
+  perfil.respuestas = { ...draftRiesgo };
+  perfil.fecha = new Date().toISOString();
+  const state = getState();
+  state.perfilRiesgo = perfil;
+  saveState(state);
+  pantallaPerfilResultadoIntermedio(state);
+}
+function pantallaPerfilResultadoIntermedio(state){
+  const p = state.perfilRiesgo;
+  document.getElementById("app").innerHTML = `
+    ${header()}
+    <div class="card">
+      <h2>Tu perfil de riesgo</h2>
+      <div class="perfil-card">
+        <div class="perfil-nombre">${p.categoria}</div>
+        <p style="margin:0;">${p.descripcion}</p>
+      </div>
+      <button class="btn" onclick="pantallaMetas(getState())">Continuar a mis metas</button>
+      ${progreso(1,5)}
+    </div>
+  `;
+}
+
+/* ============================================================
+   PANTALLA 2 — METAS
+   ============================================================ */
+let draftMetas = {};
+function pantallaMetas(state){
+  draftMetas = state.metas ? { principal: state.metas.principal, horizonte: state.metas.horizonte, secundarias: [...(state.metas.secundarias||[])] } : { principal:null, horizonte:null, secundarias:[] };
+  document.getElementById("app").innerHTML = `
+    ${header()}
+    <div class="card">
+      <h2>Tus metas</h2>
+      <div class="microcopy">Esto nos dice para qué es esta plata — así podemos ver si la forma en que la tienes repartida realmente te acerca a eso.</div>
+
+      <div class="pregunta-bloque">
+        <div class="pregunta-texto">¿Cuál es tu meta principal ahora mismo?</div>
+        <div class="opciones" id="op-meta-principal">
+          ${GOAL_OPTIONS.map(g => `<div class="opcion ${draftMetas.principal===g?'sel':''}" onclick="elegirMetaPrincipal('${esc(g)}')">${g}</div>`).join("")}
+        </div>
+      </div>
+
+      <div class="pregunta-bloque">
+        <div class="pregunta-texto">¿En cuánto tiempo te gustaría lograrlo?</div>
+        <div class="opciones" id="op-meta-horizonte">
+          ${HORIZONTE_OPTIONS.map(h => `<div class="opcion ${draftMetas.horizonte===h?'sel':''}" onclick="elegirMetaHorizonte('${esc(h)}')">${h}</div>`).join("")}
+        </div>
+      </div>
+
+      <div class="pregunta-bloque">
+        <div class="pregunta-texto">¿Tienes otras metas en mente? (opcional, puedes elegir varias)</div>
+        <div class="opciones" id="op-meta-secundarias">
+          ${GOAL_OPTIONS.map(g => `<div class="opcion ${draftMetas.secundarias.includes(g)?'sel':''}" onclick="toggleMetaSecundaria('${esc(g)}')">${g}</div>`).join("")}
+        </div>
+      </div>
+
+      <button class="btn" onclick="guardarMetas()">Continuar a mi portafolio</button>
+      <button class="link-volver" onclick="pantallaRiesgo(getState())">← Volver a mi perfil de riesgo</button>
+      ${progreso(2,5)}
+    </div>
+  `;
+}
+function elegirMetaPrincipal(g){
+  draftMetas.principal = g;
+  document.querySelectorAll("#op-meta-principal .opcion").forEach(el => el.classList.toggle("sel", el.textContent === g));
+}
+function elegirMetaHorizonte(h){
+  draftMetas.horizonte = h;
+  document.querySelectorAll("#op-meta-horizonte .opcion").forEach(el => el.classList.toggle("sel", el.textContent === h));
+}
+function toggleMetaSecundaria(g){
+  const i = draftMetas.secundarias.indexOf(g);
+  if(i>=0) draftMetas.secundarias.splice(i,1); else draftMetas.secundarias.push(g);
+  document.querySelectorAll("#op-meta-secundarias .opcion").forEach(el => el.classList.toggle("sel", draftMetas.secundarias.includes(el.textContent)));
+}
+function guardarMetas(){
+  if(!draftMetas.principal || !draftMetas.horizonte){ alertaSuave("Nos falta tu meta principal y en cuánto tiempo quieres lograrla 💛"); return; }
+  const state = getState();
+  state.metas = { principal: draftMetas.principal, horizonte: draftMetas.horizonte, secundarias: draftMetas.secundarias, fecha: new Date().toISOString() };
+  saveState(state);
+  if(state.historial && state.historial.length > 0){ pantallaRetorno(state); }
+  else { pantallaActivos(state); }
+}
+
+/* ============================================================
+   PANTALLA DE RETORNO — ya tiene perfil, decide qué mostrar
+   ============================================================ */
+function pantallaRetorno(state){
+  const ultimo = state.historial[state.historial.length-1];
+  const fecha = new Date(ultimo.fecha).toLocaleDateString("es-CO", { day:"numeric", month:"long", year:"numeric" });
+  document.getElementById("app").innerHTML = `
+    ${header()}
+    <div class="card">
+      <p class="lead">Hola de nuevo, ${esc(state.nombre)} 👋</p>
+      <p>Tu último corte fue el <b>${fecha}</b>. Eras <b>${ultimo.arquetipo}</b>, con un patrimonio neto de <b>${cop(ultimo.totales.patrimonioNeto)}</b>. Tu perfil de riesgo: <b>${state.perfilRiesgo.categoria}</b>. Tu meta principal: <b>${esc(state.metas.principal)}</b>.</p>
+      ${renderSparkline(state.historial)}
+      <button class="btn" onclick="irAActualizar()">Actualizar mis números de este mes</button>
+      <button class="btn secundario" onclick="pantallaResultado(getState(), getState().historial[getState().historial.length-1])">Ver el detalle de mi último corte</button>
+      <button class="link-volver" onclick="pantallaRiesgo(getState())">Actualizar mi perfil de riesgo o mis metas</button>
+    </div>
+  `;
+}
+function irAActualizar(){
+  const state = getState();
+  const ultimo = state.historial[state.historial.length-1];
+  draft = JSON.parse(JSON.stringify(ultimo.raw || {}));
+  draftHoldings = (draft.mercadoHoldings && draft.mercadoHoldings.length) ? draft.mercadoHoldings.map(h=>({...h})) : [holdingVacio()];
+  pantallaActivos(state);
+}
+
+/* ============================================================
+   PANTALLA 3 — ACTIVOS
+   ============================================================ */
+let draft = {};
+function grupoActivo(cat){
+  if(cat.key === "vivienda"){
+    inicializarLista("viviendaPropia");
+    inicializarLista("viviendaInversion");
+    return `<div class="cat-group">
+      <div class="cat-titulo"><span class="cat-swatch" style="background:${cat.color}"></span>${cat.label}</div>
+      <p class="cat-help">${cat.help}</p>
+      <label class="sublabel">Donde vives (si es propia)</label>
+      ${renderListaMonto('viviendaPropia')}
+      <label class="sublabel">De inversión / arriendo</label>
+      ${renderListaMonto('viviendaInversion')}
+    </div>`;
+  }
+  if(cat.key === "otros"){
+    inicializarLista("vehiculo");
+    inicializarLista("otrosActivos");
+    return `<div class="cat-group">
+      <div class="cat-titulo"><span class="cat-swatch" style="background:${cat.color}"></span>${cat.label}</div>
+      <p class="cat-help">${cat.help}</p>
+      <label class="sublabel">Vehículo</label>
+      ${renderListaMonto('vehiculo')}
+      <label class="sublabel">Otros bienes</label>
+      ${renderListaMonto('otrosActivos')}
+    </div>`;
+  }
+  if(cat.key === "mercado"){
+    draftHoldings = (draft.mercadoHoldings && draft.mercadoHoldings.length) ? draft.mercadoHoldings.map(h=>({...h})) : [holdingVacio()];
+    return `<div class="cat-group">
+      <div class="cat-titulo"><span class="cat-swatch" style="background:${cat.color}"></span>${cat.label}</div>
+      <p class="cat-help">${cat.help} Cuéntanos específicamente en qué — nos ayuda a ver si tu mezcla es muy agresiva o muy conservadora, y a preparar mejor la sesión de construcción de portafolio.</p>
+      <div id="holdings-mercado">${renderHoldingsHTML()}</div>
+    </div>`;
+  }
+  inicializarLista(cat.key);
+  return `<div class="cat-group">
+    <div class="cat-titulo"><span class="cat-swatch" style="background:${cat.color}"></span>${cat.label}</div>
+    <p class="cat-help">${cat.help}</p>
+    ${renderListaMonto(cat.key)}
+  </div>`;
+}
+function pantallaActivos(state){
+  document.getElementById("app").innerHTML = `
+    ${header()}
+    <div class="card">
+      <h2>Tus activos</h2>
+      <p>Valores aproximados — no necesitas el número exacto. Si tienes parte de una categoría en pesos y parte en dólares o euros, agrega un monto por cada moneda con "+ Agregar otro monto".</p>
+      <div class="tasa-box">
+        <label>Tasas de cambio para tus cálculos</label>
+        <div class="tasa-grid">
+          <div><label>USD → COP</label><input type="number" id="in-tasaUSD" value="${draft.tasaUSD||4000}" placeholder="Ej: 4000"></div>
+          <div><label>EUR → COP</label><input type="number" id="in-tasaEUR" value="${draft.tasaEUR||4300}" placeholder="Ej: 4300"></div>
+        </div>
+        <small class="help">Solo las usamos para sumar todo en una sola cifra y sacar porcentajes — tus valores originales en dólares o euros quedan guardados tal cual los escribiste. Ajústalas a la tasa del día si quieres más precisión.</small>
+      </div>
+      ${ASSET_CATS.map(grupoActivo).join("")}
+      <button class="btn" onclick="guardarActivos()">Siguiente: tus deudas</button>
+      ${progreso(3,5)}
+    </div>
+  `;
+}
+function guardarActivos(){
+  draft.tasaUSD = n(document.getElementById("in-tasaUSD").value) || 4000;
+  draft.tasaEUR = n(document.getElementById("in-tasaEUR").value) || 4300;
+  ASSET_CATS.forEach(cat=>{
+    if(cat.key==="vivienda"){
+      draft.viviendaPropia = leerLista("viviendaPropia");
+      draft.viviendaInversion = leerLista("viviendaInversion");
+    } else if(cat.key==="otros"){
+      draft.vehiculo = leerLista("vehiculo");
+      draft.otrosActivos = leerLista("otrosActivos");
+    } else if(cat.key==="mercado"){
+      draft.mercadoHoldings = draftHoldings
+        .filter(h => (h.ticker && h.ticker.trim()) || n(h.monto) > 0)
+        .map(h => ({ ticker: (h.ticker||"").trim(), tipo: h.tipo || "ETF", monto: n(h.monto), moneda: h.moneda || "COP" }));
+    } else {
+      draft[cat.key] = leerLista(cat.key);
+    }
+  });
+  pantallaPasivos(getState());
+}
+
+/* ============================================================
+   PANTALLA 4 — PASIVOS
+   ============================================================ */
+function pantallaPasivos(state){
+  DEBT_CATS.forEach(cat => inicializarLista(cat.key));
+  document.getElementById("app").innerHTML = `
+    ${header()}
+    <div class="card">
+      <h2>Tus deudas</h2>
+      <p>Si no tienes deuda en alguna categoría, déjala en blanco o en 0.</p>
+      ${DEBT_CATS.map(cat => `
+        <div class="cat-group">
+          <label style="margin-top:0;">${cat.label}</label>
+          ${renderListaMonto(cat.key)}
+        </div>
+      `).join("")}
+      <button class="btn" onclick="guardarPasivos()">Siguiente: tu gasto mensual</button>
+      <button class="link-volver" onclick="pantallaActivos(getState())">← Volver a mis activos</button>
+      ${progreso(4,5)}
+    </div>
+  `;
+}
+function guardarPasivos(){
+  DEBT_CATS.forEach(cat => draft[cat.key] = leerLista(cat.key));
+  pantallaContexto(getState());
+}
+
+/* ============================================================
+   PANTALLA 5 — GASTO MENSUAL (para calcular meses de colchón)
+   ============================================================ */
+function pantallaContexto(state){
+  inicializarLista("gastoMensual");
+  document.getElementById("app").innerHTML = `
+    ${header()}
+    <div class="card">
+      <h2>Un último dato</h2>
+      <p>Con esto calculamos cuántos meses de Fondo de Autonomía tienes realmente — no solo cuánto ahorro tienes, sino si te alcanza.</p>
+      <label>¿Cuánto es tu gasto mensual aproximado? (arriendo, comida, transporte, servicios — todo lo que necesitas para vivir)</label>
+      ${renderListaMonto('gastoMensual', 'Ej: 2500000')}
+      <button class="btn" onclick="verResultado()">Ver mi balance de portafolio</button>
+      <button class="link-volver" onclick="pantallaPasivos(getState())">← Volver a mis deudas</button>
+    </div>
+  `;
+}
+function verResultado(){
+  draft.gastoMensual = leerLista("gastoMensual");
+  const tasas = { usd: draft.tasaUSD, eur: draft.tasaEUR };
+  if(sumaListaCop(draft.gastoMensual, tasas) <= 0){ alertaSuave("Nos falta tu gasto mensual para calcular tu colchón 💛"); return; }
+
+  const state = getState();
+  const snapshot = calcularSnapshot(draft, tasas);
+  state.historial.push(snapshot);
+  saveState(state);
+
+  const coherencia = evaluarCoherencia(state.perfilRiesgo, state.metas, snapshot.activos, snapshot.totales.totalActivos);
+  enviarABaseDeDatos(construirPayloadPlano(state, snapshot, coherencia));
+
+  pantallaResultado(state, snapshot);
+}
+
+/* ============================================================
+   EXPORT A GOOGLE SHEET / EXCEL — payload plano, con una columna
+   por dato (no un solo JSON en una celda), pensado para que la
+   hoja se pueda abrir y analizar directamente en Excel/Drive.
+   Cada categoría de plata trae su total en COP más un "_detalle"
+   en texto con los montos y monedas originales, por si tenía
+   parte en pesos y parte en dólares o euros. Ver
+   claude/club365-balance-portafolio.md para el código de Apps
+   Script (doPost) que escribe estas columnas en tu Sheet.
+   ============================================================ */
+function construirPayloadPlano(state, snapshot, coherencia){
+  const holdings = (snapshot.raw.mercadoHoldings||[]).filter(h => h.ticker && h.ticker.trim());
+  const holdingsTexto = holdings.map(h => `${h.ticker} [${h.tipo}]: ${formatoMonto(h)}`).join(" · ");
+
+  const payload = {
+    tipo: "balance_portafolio",
+    fecha: snapshot.fecha,
+    nombre: state.nombre, email: state.email, whatsapp: state.whatsapp, edad: state.edad,
+    perfilRiesgoCategoria: state.perfilRiesgo.categoria, perfilRiesgoScore: state.perfilRiesgo.score,
+    metaPrincipal: state.metas.principal, metaHorizonte: state.metas.horizonte,
+    metasSecundarias: (state.metas.secundarias||[]).join("; "),
+    tasaUSD: snapshot.tasaUSD, tasaEUR: snapshot.tasaEUR,
+    activo_mercado_cop: snapshot.activos.mercado,
+    activo_mercado_detalle: holdingsTexto,
+    totalActivos_cop: snapshot.totales.totalActivos,
+    totalPasivos_cop: snapshot.totales.totalPasivos,
+    patrimonioNeto_cop: snapshot.totales.patrimonioNeto,
+    mesesColchon: snapshot.mesesColchon,
+    relacionDeudaActivos: snapshot.relacionDeudaActivos,
+    concentracionCategoria: snapshot.concentracion.categoria,
+    concentracionPct: snapshot.concentracion.porcentaje,
+    arquetipo: snapshot.arquetipo,
+    coherenciaEstado: coherencia ? coherencia.estado : "",
+    coherenciaTitulo: coherencia ? coherencia.titulo : ""
+  };
+  const tasas = { usd: snapshot.tasaUSD, eur: snapshot.tasaEUR };
+  CAMPOS_SIMPLES.forEach(c => {
+    payload[c.pref+"_cop"] = sumaListaCop(snapshot.raw[c.id], tasas);
+    payload[c.pref+"_detalle"] = detalleLista(snapshot.raw[c.id]);
+  });
+  return payload;
+}
+
+/* ============================================================
+   PANTALLA FINAL — RESULTADO
+   ============================================================ */
+function pantallaResultado(state, snapshot){
+  const historialAnterior = state.historial.length >= 2 ? state.historial[state.historial.length - (state.historial[state.historial.length-1]===snapshot ? 2 : 1)] : null;
+  let comparativoHtml = "";
+  if(historialAnterior && historialAnterior !== snapshot){
+    const deltaPatrimonio = snapshot.totales.patrimonioNeto - historialAnterior.totales.patrimonioNeto;
+    const deltaMeses = Math.round((snapshot.mesesColchon - historialAnterior.mesesColchon)*10)/10;
+    const fechaAnt = new Date(historialAnterior.fecha).toLocaleDateString("es-CO", { day:"numeric", month:"long" });
+    comparativoHtml = `
+      <div class="comparativo">
+        <h3 style="margin-top:0;">Desde tu corte del ${fechaAnt}</h3>
+        <div class="fila"><span>Patrimonio neto</span><b class="${deltaPatrimonio>=0?'sube':'baja'}">${deltaPatrimonio>=0?'+':''}${cop(deltaPatrimonio)}</b></div>
+        <div class="fila"><span>Meses de colchón</span><b class="${deltaMeses>=0?'sube':'baja'}">${deltaMeses>=0?'+':''}${deltaMeses}</b></div>
+        ${historialAnterior.arquetipo !== snapshot.arquetipo ? `<div class="fila"><span>Tu diagnóstico</span><b>pasó de "${historialAnterior.arquetipo}" a "${snapshot.arquetipo}"</b></div>` : ""}
+        ${renderSparkline(state.historial)}
+      </div>
+    `;
+  }
+
+  const coherencia = evaluarCoherencia(state.perfilRiesgo, state.metas, snapshot.activos, snapshot.totales.totalActivos);
+  const coherenciaHtml = coherencia ? `
+    <h3>¿Tu portafolio va con tu perfil y tu meta?</h3>
+    <div class="coherencia-box ${coherencia.estado==='ok'?'coherencia-ok':'coherencia-alerta'}">
+      <div class="coherencia-titulo">${coherencia.titulo}</div>
+      <p style="margin:0;">${coherencia.mensaje}</p>
+    </div>
+  ` : "";
+
+  document.getElementById("app").innerHTML = `
+    ${header()}
+    <div class="card">
+      <div class="perfil-card">
+        <div class="perfil-nombre">Perfil de riesgo: ${state.perfilRiesgo.categoria}</div>
+        <p style="margin:0;">${state.perfilRiesgo.descripcion}</p>
+      </div>
+      <div class="meta-card"><b>Tu meta principal:</b> ${esc(state.metas.principal)} · <b>en</b> ${esc(state.metas.horizonte).toLowerCase()}</div>
+
+      <div class="patrimonio-hero">
+        <div class="rotulo">Tu patrimonio neto</div>
+        <div class="monto">${cop(snapshot.totales.patrimonioNeto)}</div>
+        <div class="desglose">${cop(snapshot.totales.totalActivos)} en activos · ${cop(snapshot.totales.totalPasivos)} en deudas</div>
+      </div>
+
+      <h3>Así está compuesta tu plata</h3>
+      ${renderStackBar(snapshot.activos, snapshot.totales.totalActivos)}
+      <div class="legend">${renderLegend(snapshot.activos, snapshot.totales.totalActivos)}</div>
+      ${renderHoldingsResumen(snapshot)}
+
+      ${coherenciaHtml}
+
+      <h3>¿Qué tan balanceado está?</h3>
+      <div class="arquetipo-card">
+        <div class="arquetipo-nombre">${snapshot.arquetipo}</div>
+        <p style="margin:0;">${snapshot.mensaje}</p>
+      </div>
+
+      <h3>Qué mejorar</h3>
+      ${snapshot.tips.map(t => `<div class="tip">${t}</div>`).join("")}
+
+      ${comparativoHtml}
+
+      <button class="btn" onclick="render()">Listo por ahora</button>
+
+      <div class="explorar">
+        <h3>Vuelve el próximo mes</h3>
+        <p>Este balance vale más si lo repites — es la única forma de ver si tu mezcla realmente está mejorando. Guarda este link y vuelve en un mes.</p>
+        <a class="btn" href="${LINK_EXPLORAR}" target="_blank" rel="noopener">Explorar más recursos de Feminario</a>
+      </div>
+      <div class="footer-nota">Este resultado es educativo, no es asesoría financiera personalizada ni una recomendación de inversión puntual.</div>
+    </div>
+  `;
+}
+
+/* ============================================================
+   RENDER PRINCIPAL
+   ============================================================ */
+function render(){
+  const state = getState();
+  if(!state){ pantallaBienvenida(); return; }
+  if(!state.perfilRiesgo){ pantallaRiesgo(state); return; }
+  if(!state.metas){ pantallaMetas(state); return; }
+  if(!state.historial || state.historial.length === 0){ pantallaActivos(state); return; }
+  pantallaRetorno(state);
+}
+
+render();
+</script>
+</body>
+</html>
